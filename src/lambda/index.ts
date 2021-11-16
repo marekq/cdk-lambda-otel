@@ -1,15 +1,13 @@
-import { APIGatewayEventRequestContext, APIGatewayProxyEvent, APIGatewayProxyResult } from 'aws-lambda';
+import axios from 'axios';
 
-export async function handler(
-  event: APIGatewayProxyEvent,
-  context: APIGatewayEventRequestContext
-): Promise<APIGatewayProxyResult> {
-  return {
-    statusCode: 200,
-    headers: event.headers,
-    body: JSON.stringify({
-      method: event.httpMethod,
-      query: event.queryStringParameters,
-    })
-  }
-}
+exports.handler = async function (event) {
+    console.log('request:', JSON.stringify(event, undefined, 2));
+
+    const get = await axios.get('https://ipinfo.io/json');
+
+    return {
+        statusCode: 200,
+        headers: { 'Content-Type': 'text/plain' },
+        body: JSON.stringify(get.data, undefined, 2)
+    };
+};
